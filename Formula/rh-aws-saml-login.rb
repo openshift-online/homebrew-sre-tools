@@ -1,13 +1,15 @@
 class RhAwsSamlLogin < Formula
   include Language::Python::Virtualenv
 
-  desc "A CLI tool that allows you to login and retrieve AWS temporary credentials using Red Hat SAML IDP"
+  desc "CLI tool to retrieve AWS temporary credentials using Red Hat SAML IDP"
   homepage "https://github.com/app-sre/rh-aws-saml-login"
   url "https://files.pythonhosted.org/packages/f0/ad/cc309e98f868aedd1243ccff8089607c1ed10c8b681a26b659a153fbbe8b/rh_aws_saml_login-0.13.2.tar.gz"
   sha256 "78a11c0569e5686563687cc3b8ae1f65dd9ff3c668d72c1f2d1d6a78abd5dc15"
   license "MIT"
 
   depends_on "python@3.14"
+  uses_from_macos "libxml2"
+  uses_from_macos "libxslt"
 
   resource "annotated-doc" do
     url "https://files.pythonhosted.org/packages/57/ba/046ceea27344560984e26a590f90bc7f4a75b06701f653222458922b558c/annotated_doc-0.0.4.tar.gz"
