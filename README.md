@@ -1,4 +1,6 @@
-# Gvnnn Sre-tools
+# SRE Tools
+
+Tools used by Red Hat SRE to work on managed OpenShift.
 
 ## How do I install these formulae?
 
