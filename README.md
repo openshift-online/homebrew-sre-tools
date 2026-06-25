@@ -4,14 +4,14 @@ Tools used by Red Hat SRE to work on managed OpenShift.
 
 ## How do I install these formulae?
 
-`brew install gvnnn/sre-tools/<formula>`
+`brew install openshift-online/sre-tools/<formula>`
 
-Or `brew tap gvnnn/sre-tools` and then `brew install <formula>`.
+Or `brew tap openshift-online/sre-tools` and then `brew install <formula>`.
 
 Or, in a `brew bundle` `Brewfile`:
 
 ```ruby
-tap "gvnnn/sre-tools"
+tap "openshift-online/sre-tools"
 brew "<formula>"
 ```
 
