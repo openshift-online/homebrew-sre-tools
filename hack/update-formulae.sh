@@ -7,6 +7,22 @@ FORMULAE=("${@}")
 SCRATCH="$(mktemp -d)"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+OS="$(uname -s)"
+case "${OS}" in
+	Linux)
+		SHA256SUM=(sha256sum)
+		SED=(sed -i)
+		;;
+	Darwin)
+		SHA256SUM=(shasum -a 256)
+		SED=(sed -i '')
+		;;
+	*)
+		echo "Unsupported OS: ${OS}" >&2
+		exit 1
+		;;
+esac
+
 function err() {
 	echo "${1}" >&2
 }
@@ -77,15 +93,15 @@ function update_github_formula() {
 	fi
 
 	local new_sha256
-	new_sha256="$(shasum -a 256 "${tarball_path}" | awk '{print $1}')"
+	new_sha256="$("${SHA256SUM[@]}" "${tarball_path}" | awk '{print $1}')"
 	echo "  → SHA256: ${new_sha256}"
 
 	# Update the formula file
 	# First, update the URL
-	sed -i '' -E "s|url \"https://github\.com/${github_repo}/archive/refs/tags/v?[0-9]+\.[0-9]+\.[0-9]+[^\"]*\.tar\.gz\"|url \"${new_url}\"|" "${formula_file}"
+	"${SED[@]}" -E "s|url \"https://github\.com/${github_repo}/archive/refs/tags/v?[0-9]+\.[0-9]+\.[0-9]+[^\"]*\.tar\.gz\"|url \"${new_url}\"|" "${formula_file}"
 
 	# Then, update the SHA256
-	sed -i '' -E "s/sha256 \"[a-f0-9]{64}\"/sha256 \"${new_sha256}\"/" "${formula_file}"
+	"${SED[@]}" -E "s/sha256 \"[a-f0-9]{64}\"/sha256 \"${new_sha256}\"/" "${formula_file}"
 
 	echo "  ✓ Updated ${formula_file}"
 	rm -f "${tarball_path}"
@@ -142,7 +158,7 @@ function update_pypi_formula() {
 	local old_url_pattern
 	old_url_pattern=$(grep -E '^\s*url "https://files\.pythonhosted\.org' "${formula_file}" | head -n1 | sed -E 's/^ +url "([^"]+)"/\1/')
 
-	sed -i '' -E "s|url \"${old_url_pattern}\"|url \"${new_url}\"|" "${formula_file}"
+	"${SED[@]}" -E "s|url \"${old_url_pattern}\"|url \"${new_url}\"|" "${formula_file}"
 
 	# Update the first SHA256 (the main package)
 	# BSD sed (macOS) doesn't support GNU's 0,/pattern/ for first-occurrence replacement
