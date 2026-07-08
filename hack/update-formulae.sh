@@ -23,11 +23,11 @@ trap cleanup EXIT
 function get_current_version() {
 	local formula_file="${1}"
 	# Extract version from the URL line - handles both PyPI and GitHub
-	grep -E '^\s*url ' "${formula_file}" | \
-		sed -E 's|.*/||' | \
-		sed -E 's/"$//' | \
-		sed -E 's|\.tar\.gz$||; s|\.zip$||' | \
-		sed -E 's|^v||; s|.*-||' | \
+	grep -E '^\s*url ' "${formula_file}" |
+		sed -E 's|.*/||' |
+		sed -E 's/"$//' |
+		sed -E 's|\.tar\.gz$||; s|\.zip$||' |
+		sed -E 's|^v||; s|.*-||' |
 		head -n1
 }
 
@@ -40,7 +40,7 @@ function update_github_formula() {
 
 	# Fetch all releases and filter out pre-releases
 	local latest_release
-	latest_release="$(curl -s "https://api.github.com/repos/${github_repo}/releases" | \
+	latest_release="$(curl -s "https://api.github.com/repos/${github_repo}/releases" |
 		jq -r '[.[] | select(.prerelease == false and .draft == false)] | first | .tag_name')"
 
 	if [ -z "${latest_release}" ] || [ "${latest_release}" = "null" ]; then
@@ -140,12 +140,15 @@ function update_pypi_formula() {
 
 	# Update the main package URL and SHA256
 	local old_url_pattern
-	old_url_pattern=$(grep -E '^\s*url "https://files\.pythonhosted\.org' "${formula_file}" | head -n1 | sed -E 's/^\s*url "(.*)"/\1/')
+	old_url_pattern=$(grep -E '^\s*url "https://files\.pythonhosted\.org' "${formula_file}" | head -n1 | sed -E 's/^ +url "([^"]+)"/\1/')
 
 	sed -i '' -E "s|url \"${old_url_pattern}\"|url \"${new_url}\"|" "${formula_file}"
 
 	# Update the first SHA256 (the main package)
-	sed -i '' -E "0,/sha256 \"[a-f0-9]{64}\"/s//sha256 \"${new_sha256}\"/" "${formula_file}"
+	# BSD sed (macOS) doesn't support GNU's 0,/pattern/ for first-occurrence replacement
+	awk -v new_sha="${new_sha256}" \
+		'!done && /sha256 "[a-f0-9]{64}"/ { sub(/sha256 "[a-f0-9]{64}"/, "sha256 \"" new_sha "\""); done=1 } { print }' \
+		"${formula_file}" >"${formula_file}.tmp" && mv "${formula_file}.tmp" "${formula_file}"
 
 	echo "  ✓ Updated ${formula_file}"
 	echo ""
@@ -172,7 +175,7 @@ function update_formula() {
 
 	# Check if it's a GitHub-based formula
 	local github_repo
-	github_repo=$(grep -oE 'url "https://github\.com/[^/]+/[^/"]+' "${formula_file}" | \
+	github_repo=$(grep -oE 'url "https://github\.com/[^/]+/[^/"]+' "${formula_file}" |
 		sed -E 's|url "https://github\.com/||; s|/archive.*||; s|\.git$||')
 
 	if [ -n "${github_repo}" ]; then
@@ -184,7 +187,7 @@ function update_formula() {
 	if grep -q 'files.pythonhosted.org' "${formula_file}"; then
 		# Extract package name from the URL or formula name
 		local package_name
-		package_name=$(grep -oE 'files.pythonhosted.org/packages/[^/]+/[^/]+/[^/]+/([^/]+)-[0-9]' "${formula_file}" | \
+		package_name=$(grep -oE 'files.pythonhosted.org/packages/[^/]+/[^/]+/[^/]+/([^/]+)-[0-9]' "${formula_file}" |
 			sed -E 's|.*/([^/]+)-[0-9].*|\1|' | tr '_' '-' | head -n1)
 
 		if [ -z "${package_name}" ]; then

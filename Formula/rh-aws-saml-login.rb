@@ -3,8 +3,8 @@ class RhAwsSamlLogin < Formula
 
   desc "CLI tool to retrieve AWS temporary credentials using Red Hat SAML IDP"
   homepage "https://github.com/app-sre/rh-aws-saml-login"
-  url "https://files.pythonhosted.org/packages/f0/ad/cc309e98f868aedd1243ccff8089607c1ed10c8b681a26b659a153fbbe8b/rh_aws_saml_login-0.13.2.tar.gz"
-  sha256 "78a11c0569e5686563687cc3b8ae1f65dd9ff3c668d72c1f2d1d6a78abd5dc15"
+  url "https://files.pythonhosted.org/packages/42/ea/8b64ab0fa491e9eb62d3362abe4400b6f246ac44dd487fd9b1909a50d9bf/rh_aws_saml_login-0.15.1.tar.gz"
+  sha256 "b5ab1e83451e8ca8c612dd250e10b50082c474c4519c2148a40f5ef6df506ee2"
   license "MIT"
 
   depends_on "python@3.14"
