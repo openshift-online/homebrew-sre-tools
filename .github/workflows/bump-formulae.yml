@@ -52,5 +52,6 @@ jobs:
           brew bump \
             --formulae \
             --tap openshift-online/sre-tools \
+            --full-name \
             --open-pr \
             --no-fork
