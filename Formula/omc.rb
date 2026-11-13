@@ -1,8 +1,8 @@
 class Omc < Formula
   desc "OpenShift Must-Gather Client"
   homepage "https://github.com/gmeghnag/omc"
-  url "https://github.com/gmeghnag/omc/archive/refs/tags/v3.19.1.tar.gz"
-  sha256 "553b5d8063c1a5475fa32e34989269ba18b9d1c220e7e7ccf7caea3d147cd9c0"
+  url "https://github.com/gmeghnag/omc/archive/refs/tags/v3.20.0.tar.gz"
+  sha256 "37bf5e04706e801706b010e706d76cadb3f57ad568c7f1efaa66b3d1b8d15417"
   license "Apache-2.0"
   head "https://github.com/gmeghnag/omc.git", branch: "main"
 
